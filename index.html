@@ -704,43 +704,131 @@
     #questions { background: var(--surface); }
 
     .q-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
     }
 
+    /* Accordion card */
     .q-card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 1.6rem 1.8rem;
       box-shadow: 0 2px 10px var(--shadow);
-      transition: border-color .2s;
+      overflow: hidden;
+      transition: border-color .25s;
     }
 
     .q-card:hover { border-color: rgba(124,109,247,0.3); }
 
+    .q-card.open { border-color: rgba(124,109,247,0.4); }
+
+    /* Clickable header row */
+    .q-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.1rem 1.5rem;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
     .q-num {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       font-weight: 700;
       letter-spacing: 0.15em;
       color: var(--accent);
       text-transform: uppercase;
-      margin-bottom: 0.5rem;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .q-text {
       font-size: 0.9rem;
       font-weight: 600;
       color: var(--text);
-      margin-bottom: 0.8rem;
-      line-height: 1.5;
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    /* Chevron */
+    .q-chevron {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      color: var(--muted);
+      transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), color 0.2s;
+    }
+
+    .q-card.open .q-chevron {
+      transform: rotate(180deg);
+      color: var(--accent);
+    }
+
+    /* Collapsible answer body */
+    .q-body {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.38s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    .q-card.open .q-body {
+      grid-template-rows: 1fr;
+    }
+
+    .q-body-inner {
+      overflow: hidden;
     }
 
     .q-answer {
       font-size: 0.87rem;
       color: var(--muted);
       line-height: 1.75;
+      padding: 0 1.5rem 1.3rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+
+    /* Hidden extra cards */
+    .q-card.q-hidden {
+      display: none;
+    }
+
+    /* Load more button */
+    .load-more-wrap {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+
+    .load-more-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.8rem;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: inherit;
+    }
+
+    .load-more-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(124,109,247,0.06);
+    }
+
+    .load-more-btn svg {
+      transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    .load-more-btn.expanded svg {
+      transform: rotate(180deg);
     }
 
     /* ── CONTACT ── */
@@ -1192,133 +1280,197 @@
       <div class="divider" data-anim="scale-up"></div>
       <p style="color: var(--muted); margin-bottom: 2.5rem; font-size: 0.93rem;" data-anim="blur-in">Beyond the resume: the mindset, values, and stories that shape how I think and work.</p>
 
-      <div class="q-grid">
+      <div class="q-grid" id="qGrid">
 
-        <div class="q-card" data-anim="fade-right" style="transition-delay:0.00s">
-          <div class="q-num">Question 01</div>
-          <div class="q-text">What's the riskiest thing you have done in life?</div>
-          <div class="q-answer">Quitting a stable software engineering career at TCS to pursue an MBA and pivot entirely into product and customer success, with no safety net and no guarantee it would work. Mumbai doesn't reward ambiguity easily, and I had no roadmap. It was the best decision I ever made.</div>
-        </div>
-
-        <div class="q-card" data-anim="fade-left" style="transition-delay:0.06s">
-          <div class="q-num">Question 02</div>
-          <div class="q-text">Choose between money or power? Why?</div>
-          <div class="q-answer">Power, specifically the power to influence outcomes. Money follows impact, but power to shape a product, a team, or a customer's trajectory creates a multiplier effect. I'd rather be in the room where decisions are made than be compensated for the aftermath of someone else's decision.</div>
-        </div>
-
-        <div class="q-card" data-anim="fade-right" style="transition-delay:0.12s">
-          <div class="q-num">Question 03</div>
-          <div class="q-text">Are you usually more spontaneous or calculative? Why?</div>
-          <div class="q-answer">Calculative in strategy, spontaneous in execution. I map the terrain carefully: the customer's pain points, the team dynamics, the risks. But once I commit to a direction, I move fast and adapt on the fly. Pure spontaneity is chaos; pure calculation is paralysis. The edge lives between them.</div>
-        </div>
-
-        <div class="q-card" data-anim="fade-left" style="transition-delay:0.18s">
-          <div class="q-num">Question 04</div>
-          <div class="q-text">Do you usually strive for speed or perfection? Why?</div>
-          <div class="q-answer">Speed with a quality floor. Perfection is a myth in fast-moving SaaS environments; the market doesn't wait. I've shipped features that weren't perfect but solved real problems, and iterated from there. That said, I will never trade speed for trust. A rushed customer interaction costs more than a delayed one.</div>
-        </div>
-
-        <div class="q-card" data-anim="fade-right" style="transition-delay:0.24s">
-          <div class="q-num">Question 05</div>
-          <div class="q-text">What's more important: the institute name or the course you study? Why?</div>
-          <div class="q-answer">The course. I studied Mechanical Engineering, then did an MBA in Operations and Marketing. None of it was a conventional path to tech SaaS. What mattered was the thinking framework each discipline gave me. No brand name teaches you how to run a war-room during an IPL-scale outage. Real-world reps do.</div>
-        </div>
-
-        <div class="q-card" data-anim="fade-left" style="transition-delay:0.30s">
-          <div class="q-num">Question 06</div>
-          <div class="q-text">What's something you know you should do but keep procrastinating on? What makes it hard?</div>
-          <div class="q-answer">Building my personal brand consistently: writing, posting, sharing frameworks publicly. The blocker is perfectionism disguised as humility. I tell myself my ideas aren't ready, but the truth is I'm afraid of being wrong in public. The irony is that every time I do share, it creates value. I'm working on shipping the thought, not the thesis.</div>
-        </div>
-
-        <div class="q-card" data-anim="fade-right" style="transition-delay:0.36s">
-          <div class="q-num">Question 07</div>
-          <div class="q-text">Why do you get angry? How often?</div>
-          <div class="q-answer">I get angry when avoidable mistakes repeat themselves, when systems fail people who trusted them, or when effort is clearly absent. It's rare, maybe a handful of times a year. I've learned that anger is useful as a signal but destructive as a tool, so I've trained myself to pause, diagnose, and channel it into a fix instead.</div>
-        </div>
-
-        <div class="q-card" data-anim="fade-left" style="transition-delay:0.42s">
-          <div class="q-num">Question 08</div>
-          <div class="q-text">Why do you lose patience? How often?</div>
-          <div class="q-answer">Slow decision-making in urgent situations. When a customer is bleeding and internal processes move at committee pace, I feel it acutely. It happens a few times a month. I've built the reflex of asking "what can I unblock right now?" rather than waiting for perfect alignment; that shift changed how I lead war-rooms entirely.</div>
-        </div>
-
-        <div class="q-card" data-anim="fade-right" style="transition-delay:0.48s">
-          <div class="q-num">Question 09</div>
-          <div class="q-text">When was the last time you were intimidated?</div>
-          <div class="q-answer">Walking into my first C-suite QBR at an Enterprise account early in my CS career. A room full of VPs and CTOs, and I was the one accountable for their platform outcomes. What killed the intimidation was focusing on the data: I knew their numbers better than they did. Preparation is the antidote to intimidation.</div>
-        </div>
-
-        <div class="q-card" data-anim="fade-left" style="transition-delay:0.54s">
-          <div class="q-num">Question 10</div>
-          <div class="q-text">When was the last time you had self-doubt?</div>
-          <div class="q-answer">Every time I step into a new scope. When I moved from Head of Onboardings to APM at CleverTap, I questioned whether I could think like a product person. The doubt lasted about three weeks before momentum took over. Self-doubt, for me, is just the body's way of saying "this is new territory, pay attention." I've learned to treat it as a good sign.</div>
-        </div>
-
-        <div class="q-card" data-anim="fade-right" style="transition-delay:0.60s">
-          <div class="q-num">Question 11</div>
-          <div class="q-text">What would your worst enemy say about you?</div>
-          <div class="q-answer">That I can be relentlessly direct to the point of bluntness, and that I move faster than people around me are comfortable with. Probably also that I'm stubborn when I believe I'm right. I think they'd be correct on all three. I'd rather be direct and wrong than ambiguous and safe. Stubborn conviction, paired with evidence, has served me well.</div>
-        </div>
-
-        <div class="q-card" data-anim="fade-left" style="transition-delay:0.66s">
-          <div class="q-num">Question 12</div>
-          <div class="q-text">List at least 3 things you have learnt about life.</div>
-          <div class="q-answer">
-            1. Consistency beats intensity: showing up every day at 80% outperforms sporadic 100% sprints.<br/>
-            2. People remember how you made them feel, not what you delivered, especially in customer-facing roles.<br/>
-            3. The quality of your questions defines the quality of your outcomes. Ask better questions, get better answers, build better things.
+        <div class="q-card" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 01</span>
+            <span class="q-text">What's the riskiest thing you have done in life?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">Quitting a stable software engineering career at TCS to pursue an MBA and pivot entirely into product and customer success, with no safety net and no guarantee it would work. Mumbai doesn't reward ambiguity easily, and I had no roadmap. It was the best decision I ever made.</div></div></div>
         </div>
 
-        <div class="q-card" data-anim="fade-right" style="transition-delay:0.72s">
-          <div class="q-num">Question 13</div>
-          <div class="q-text">Share the latest new thing you have learnt.</div>
-          <div class="q-answer">Observability as a discipline, not just monitoring dashboards but understanding the full causal chain of system behavior. Working at Last9 fundamentally changed how I think about reliability. I can now read OpenTelemetry traces, correlate logs with latency spikes, and walk into an engineering conversation as a peer, not a translator.</div>
+        <div class="q-card" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 02</span>
+            <span class="q-text">Choose between money or power? Why?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">Power, specifically the power to influence outcomes. Money follows impact, but power to shape a product, a team, or a customer's trajectory creates a multiplier effect. I'd rather be in the room where decisions are made than be compensated for the aftermath of someone else's decision.</div></div></div>
         </div>
 
-        <div class="q-card" data-anim="fade-left" style="transition-delay:0.78s">
-          <div class="q-num">Question 14</div>
-          <div class="q-text">In a span of 2-3 year from now, what do you think you will be celebrating? And why?</div>
-          <div class="q-answer">A step into a VP or Chief Customer Officer role at a company building something genuinely transformative, and the first time a team I've built runs a QBR without needing me in the room. That's the benchmark for me. Not the title, but the evidence that I've multiplied myself through people.</div>
+        <div class="q-card" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 03</span>
+            <span class="q-text">Are you usually more spontaneous or calculative? Why?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">Calculative in strategy, spontaneous in execution. I map the terrain carefully: the customer's pain points, the team dynamics, the risks. But once I commit to a direction, I move fast and adapt on the fly. Pure spontaneity is chaos; pure calculation is paralysis. The edge lives between them.</div></div></div>
         </div>
 
-        <div class="q-card" data-anim="fade-right" style="transition-delay:0.84s">
-          <div class="q-num">Question 15</div>
-          <div class="q-text">What would you do differently if you knew nobody would judge you?</div>
-          <div class="q-answer">I'd ship ideas in public much faster: frameworks, opinions, failures included. I hold back too much in the name of "getting it right first." I'd also take more creative risks in how I present to executives, less slide deck, more live storytelling. Judgment is the tax I pay for playing in public. I'm raising my risk appetite.</div>
+        <div class="q-card" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 04</span>
+            <span class="q-text">Do you usually strive for speed or perfection? Why?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">Speed with a quality floor. Perfection is a myth in fast-moving SaaS environments; the market doesn't wait. I've shipped features that weren't perfect but solved real problems, and iterated from there. That said, I will never trade speed for trust. A rushed customer interaction costs more than a delayed one.</div></div></div>
         </div>
 
-        <div class="q-card" data-anim="fade-left" style="transition-delay:0.90s">
-          <div class="q-num">Question 16</div>
-          <div class="q-text">Rate your self-worth on a scale of 1 to 10. Why?</div>
-          <div class="q-answer">8. I know what I'm capable of and I back myself in high-stakes situations. The two points I leave open are intentional; they're the discomfort I use to stay hungry. The moment I give myself a 10 is the moment I stop growing. Confidence without hunger is complacency, and I refuse that.</div>
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 05</span>
+            <span class="q-text">What's more important: the institute name or the course you study? Why?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">The course. I studied Mechanical Engineering, then did an MBA in Operations and Marketing. None of it was a conventional path to tech SaaS. What mattered was the thinking framework each discipline gave me. No brand name teaches you how to run a war-room during an IPL-scale outage. Real-world reps do.</div></div></div>
         </div>
 
-        <div class="q-card" data-anim="fade-right" style="transition-delay:0.96s">
-          <div class="q-num">Question 17</div>
-          <div class="q-text">What talent do you have that you are currently not using?</div>
-          <div class="q-answer">Two, actually. Both feel less like hobbies and more like roads I took a long look at and chose not to walk down yet.<br/><br/>The first is teaching. At a very young age, I was a mathematics teacher at one of Mumbai's stock-listed coaching institutes. There is a rare kind of satisfaction in taking a concept that intimidates most people and making it genuinely click for a student. I haven't been able to pursue it full-time or even part-time since, but when life gives me the space, that is the path I would walk toward without hesitation.<br/><br/>The second is photography. I have been a professional photographer with multiple personal assignments to my name: portraits, events, moments worth holding still. It never scaled the way it could have because other commitments always came first. But the eye for light, composition, and story never left. It is still there, waiting.</div>
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 06</span>
+            <span class="q-text">What's something you know you should do but keep procrastinating on?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">Building my personal brand consistently: writing, posting, sharing frameworks publicly. The blocker is perfectionism disguised as humility. I tell myself my ideas aren't ready, but the truth is I'm afraid of being wrong in public. The irony is that every time I do share, it creates value. I'm working on shipping the thought, not the thesis.</div></div></div>
         </div>
 
-        <div class="q-card" data-anim="fade-left" style="transition-delay:1.02s">
-          <div class="q-num">Question 18</div>
-          <div class="q-text">Where do you draw the most energy from?</div>
-          <div class="q-answer">From the moment a customer goes from frustrated to unstoppable. There is nothing like watching an enterprise team that was ready to churn turn into advocates because we solved the right problem in the right way. That feedback loop, solving hard problems for real people, is where I feel most alive. It's why I've stayed in customer-facing roles.</div>
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 07</span>
+            <span class="q-text">Why do you get angry? How often?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">I get angry when avoidable mistakes repeat themselves, when systems fail people who trusted them, or when effort is clearly absent. It's rare, maybe a handful of times a year. I've learned that anger is useful as a signal but destructive as a tool, so I've trained myself to pause, diagnose, and channel it into a fix instead.</div></div></div>
         </div>
 
-        <div class="q-card" data-anim="fade-right" style="transition-delay:1.08s">
-          <div class="q-num">Question 19</div>
-          <div class="q-text">What time do you generally get up? What time do you sleep?</div>
-          <div class="q-answer">Up by 6:00 to 6:30 AM. Sleep by midnight. The morning window is sacred: no meetings, no Slack, just thinking, reading, and setting intent for the day. I've found that how I spend the first 90 minutes determines the quality of the next 14 hours. The late nights are when I do my deepest work, writing, or building. I'm wired for both ends of the day.</div>
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 08</span>
+            <span class="q-text">Why do you lose patience? How often?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">Slow decision-making in urgent situations. When a customer is bleeding and internal processes move at committee pace, I feel it acutely. It happens a few times a month. I've built the reflex of asking "what can I unblock right now?" rather than waiting for perfect alignment; that shift changed how I lead war-rooms entirely.</div></div></div>
         </div>
 
-        <div class="q-card" data-anim="fade-left" style="transition-delay:1.14s">
-          <div class="q-num">Question 20</div>
-          <div class="q-text">What do you believe you are best at?</div>
-          <div class="q-answer">Translating ambiguity into momentum. Whether it's a struggling customer relationship, a chaotic product roadmap, or a team that's lost direction: I walk into the fog, find the signal, and build a path forward that people can follow. That's the thread connecting everything I've done: software developer, PM, Head of Onboardings, CS Director. I make complex things move.</div>
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 09</span>
+            <span class="q-text">When was the last time you were intimidated?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">Walking into my first C-suite QBR at an Enterprise account early in my CS career. A room full of VPs and CTOs, and I was the one accountable for their platform outcomes. What killed the intimidation was focusing on the data: I knew their numbers better than they did. Preparation is the antidote to intimidation.</div></div></div>
+        </div>
+
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 10</span>
+            <span class="q-text">When was the last time you had self-doubt?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">Every time I step into a new scope. When I moved from Head of Onboardings to APM at CleverTap, I questioned whether I could think like a product person. The doubt lasted about three weeks before momentum took over. Self-doubt, for me, is just the body's way of saying "this is new territory, pay attention." I've learned to treat it as a good sign.</div></div></div>
+        </div>
+
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 11</span>
+            <span class="q-text">What would your worst enemy say about you?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">That I can be relentlessly direct to the point of bluntness, and that I move faster than people around me are comfortable with. Probably also that I'm stubborn when I believe I'm right. I think they'd be correct on all three. I'd rather be direct and wrong than ambiguous and safe. Stubborn conviction, paired with evidence, has served me well.</div></div></div>
+        </div>
+
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 12</span>
+            <span class="q-text">List at least 3 things you have learnt about life.</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">1. Consistency beats intensity: showing up every day at 80% outperforms sporadic 100% sprints.<br/>2. People remember how you made them feel, not what you delivered, especially in customer-facing roles.<br/>3. The quality of your questions defines the quality of your outcomes. Ask better questions, get better answers, build better things.</div></div></div>
+        </div>
+
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 13</span>
+            <span class="q-text">Share the latest new thing you have learnt.</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">Observability as a discipline, not just monitoring dashboards but understanding the full causal chain of system behavior. Working at Last9 fundamentally changed how I think about reliability. I can now read OpenTelemetry traces, correlate logs with latency spikes, and walk into an engineering conversation as a peer, not a translator.</div></div></div>
+        </div>
+
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 14</span>
+            <span class="q-text">In 2-3 years from now, what do you think you will be celebrating?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">A step into a VP or Chief Customer Officer role at a company building something genuinely transformative, and the first time a team I've built runs a QBR without needing me in the room. That's the benchmark for me. Not the title, but the evidence that I've multiplied myself through people.</div></div></div>
+        </div>
+
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 15</span>
+            <span class="q-text">What would you do differently if you knew nobody would judge you?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">I'd ship ideas in public much faster: frameworks, opinions, failures included. I hold back too much in the name of "getting it right first." I'd also take more creative risks in how I present to executives, less slide deck, more live storytelling. Judgment is the tax I pay for playing in public. I'm raising my risk appetite.</div></div></div>
+        </div>
+
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 16</span>
+            <span class="q-text">Rate your self-worth on a scale of 1 to 10. Why?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">8. I know what I'm capable of and I back myself in high-stakes situations. The two points I leave open are intentional; they're the discomfort I use to stay hungry. The moment I give myself a 10 is the moment I stop growing. Confidence without hunger is complacency, and I refuse that.</div></div></div>
+        </div>
+
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 17</span>
+            <span class="q-text">What talent do you have that you are currently not using?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">Two, actually. Both feel less like hobbies and more like roads I took a long look at and chose not to walk down yet.<br/><br/>The first is teaching. At a very young age, I was a mathematics teacher at one of Mumbai's stock-listed coaching institutes. There is a rare kind of satisfaction in taking a concept that intimidates most people and making it genuinely click for a student. I haven't been able to pursue it full-time or even part-time since, but when life gives me the space, that is the path I would walk toward without hesitation.<br/><br/>The second is photography. I have been a professional photographer with multiple personal assignments to my name: portraits, events, moments worth holding still. It never scaled the way it could have because other commitments always came first. But the eye for light, composition, and story never left. It is still there, waiting.</div></div></div>
+        </div>
+
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 18</span>
+            <span class="q-text">Where do you draw the most energy from?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">From the moment a customer goes from frustrated to unstoppable. There is nothing like watching an enterprise team that was ready to churn turn into advocates because we solved the right problem in the right way. That feedback loop, solving hard problems for real people, is where I feel most alive. It's why I've stayed in customer-facing roles.</div></div></div>
+        </div>
+
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 19</span>
+            <span class="q-text">What time do you generally get up? What time do you sleep?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">Up by 6:00 to 6:30 AM. Sleep by midnight. The morning window is sacred: no meetings, no Slack, just thinking, reading, and setting intent for the day. I've found that how I spend the first 90 minutes determines the quality of the next 14 hours. The late nights are when I do my deepest work, writing, or building. I'm wired for both ends of the day.</div></div></div>
+        </div>
+
+        <div class="q-card q-hidden" data-anim="fade-up">
+          <div class="q-header">
+            <span class="q-num">Q 20</span>
+            <span class="q-text">What do you believe you are best at?</span>
+            <svg class="q-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="q-body"><div class="q-body-inner"><div class="q-answer">Translating ambiguity into momentum. Whether it's a struggling customer relationship, a chaotic product roadmap, or a team that's lost direction: I walk into the fog, find the signal, and build a path forward that people can follow. That's the thread connecting everything I've done: software developer, PM, Head of Onboardings, CS Director. I make complex things move.</div></div></div>
         </div>
 
       </div>
+
+      <div class="load-more-wrap" data-anim="fade-up">
+        <button class="load-more-btn" id="loadMoreBtn">
+          <svg class="load-more-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform 0.3s cubic-bezier(0.22,1,0.36,1)"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="load-more-label">Show all 20 questions</span>
+        </button>
+      </div>
+
     </div>
   </section>
 
@@ -1511,6 +1663,47 @@
       });
     }, { threshold: 0.4 });
     sections.forEach(s => sectionObserver.observe(s));
+
+    // Accordion: toggle individual q-cards
+    document.querySelectorAll('.q-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const card = header.closest('.q-card');
+        card.classList.toggle('open');
+      });
+    });
+
+    // Load more / show less for hidden q-cards
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const hiddenCards = Array.from(document.querySelectorAll('.q-card.q-hidden'));
+    let allVisible = false;
+
+    loadMoreBtn.addEventListener('click', () => {
+      allVisible = !allVisible;
+      hiddenCards.forEach(card => {
+        if (allVisible) {
+          card.style.display = 'block';
+          requestAnimationFrame(() => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(16px)';
+            requestAnimationFrame(() => {
+              card.style.transition = 'opacity 0.35s cubic-bezier(0.22,1,0.36,1), transform 0.35s cubic-bezier(0.22,1,0.36,1)';
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+            });
+          });
+        } else {
+          card.style.transition = '';
+          card.style.opacity = '';
+          card.style.transform = '';
+          card.style.display = 'none';
+          card.classList.remove('open');
+        }
+      });
+      const btnText = loadMoreBtn.querySelector('.load-more-label');
+      const btnChevron = loadMoreBtn.querySelector('.load-more-chevron');
+      if (btnText) btnText.textContent = allVisible ? 'Show less' : 'Show all 20 questions';
+      if (btnChevron) btnChevron.style.transform = allVisible ? 'rotate(180deg)' : '';
+    });
   </script>
 </body>
 </html>
